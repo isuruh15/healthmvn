@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.healthcare</groupId>
-    <artifactId>healthmvn</artifactId>
+    <groupId>io.ballerina</groupId>
+    <artifactId>health-tools</artifactId>
     <version>0.1.0</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.healthcare.tool.framework>3.1.0-SNAPSHOT</version.healthcare.tool.framework>
     </properties>
 
     <dependencies>
@@ -27,6 +28,16 @@
             <artifactId>ballerina-cli</artifactId>
             <version>2201.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.esb.connector</groupId>
+            <artifactId>healthcare-codegen-tool-common</artifactId>
+            <version>${version.healthcare.tool.framework}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.esb.connector</groupId>
+            <artifactId>open-healthcare-fhir-tool-lib</artifactId>
+            <version>${version.healthcare.tool.framework}</version>
+        </dependency>
 
     </dependencies>
 
@@ -35,6 +46,15 @@
             <id>github</id>
             <name>Ballerina Package Repository</name>
             <url>https://maven.pkg.github.com/ballerina-platform/*</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>github-healthcare</id>
+            <name>Healthcare Package Repository</name>
+            <url>https://maven.pkg.github.com/isuruh15/open-healthcare-integration</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
@@ -64,5 +84,73 @@
             </releases>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <archive>-->
+<!--                                <manifest>-->
+<!--                                    <mainClass>-->
+<!--                                        io.ballerina.health.cmd.HealthCmd-->
+<!--                                    </mainClass>-->
+<!--                                </manifest>-->
+<!--                            </archive>-->
+<!--                            <descriptorRefs>-->
+<!--                                <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                            </descriptorRefs>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/tool-lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>tool-lib/</classpathPrefix>
+                            <mainClass>HealthCmd</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
