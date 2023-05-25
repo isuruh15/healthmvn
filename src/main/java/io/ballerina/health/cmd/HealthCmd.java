@@ -2,8 +2,10 @@
 package io.ballerina.health.cmd;
 
 import io.ballerina.cli.BLauncherCmd;
+import io.ballerina.health.cmd.core.utils.HealthCmdConstants;
 import io.ballerina.health.cmd.fhir.FhirSubCmd;
 import io.ballerina.health.cmd.hl7.Hl7SubCmd;
+import org.apache.commons.lang3.StringUtils;
 import picocli.CommandLine;
 
 import java.io.PrintStream;
@@ -11,11 +13,11 @@ import java.util.List;
 
 @CommandLine.Command(
         name = "health",
-        description = "Health mvn sub tool",
-        subcommands = {
-                FhirSubCmd.class,
-                Hl7SubCmd.class
-        }
+        description = "Health mvn sub tool"
+//        subcommands = {
+//                FhirSubCmd.class,
+//                Hl7SubCmd.class
+//        }
 )
 public class HealthCmd implements BLauncherCmd {
 
@@ -24,8 +26,14 @@ public class HealthCmd implements BLauncherCmd {
     @CommandLine.Option(names = {"--help", "-h", "?"}, usageHelp = true)
     private boolean helpFlag;
 
-    @CommandLine.Parameters(description = "User name")
+//    @CommandLine.Option(names = {"--spec-path", "-s"}, description = "Path to health specification files.")
+//    private String specPath;
+
+    @CommandLine.Parameters(description = "Options for the sub commands")
     private List<String> argList;
+
+    private String specPath;
+    private String subCommand;
 
     public HealthCmd(PrintStream printStream) {
         this.printStream = printStream;
@@ -45,13 +53,39 @@ public class HealthCmd implements BLauncherCmd {
             builder.append("  <name>\n");
             builder.append("    greets with a hello <name>\n\n");
             printStream.println(builder);
+            String commandUsageInfo = BLauncherCmd.getCommandUsageInfo(getName());
+            printStream.println(commandUsageInfo);
             return;
+        }
+
+        if (argList == null || argList.size() < 2) {
+            //at minimum arg count is 2 (protocol and spec path)
+            printStream.println("Invalid number of arguments received!\n try bal health --help for more information.");
+            return;
+        }
+        //spec path is the last argument
+        specPath = argList.get(argList.size()-1);
+        subCommand = argList.get(0);
+        printStream.println("spec to main"+specPath);
+        printStream.println("cmd to main"+subCommand);
+
+
+        if (StringUtils.isNotBlank(specPath) && StringUtils.isNotBlank(subCommand)){
+            printStream.println("initial arg validation");
+            if (HealthCmdConstants.CMD_SUB_FHIR.equalsIgnoreCase(subCommand)){
+                printStream.println("fhir from main");
+//                FhirSubCmd fhirSubCmd = new FhirSubCmd(printStream,true);
+                FhirSubCmd fhirSubCmd = new FhirSubCmd();
+                fhirSubCmd.engageSubCommand(argList);
+            }
+            if (HealthCmdConstants.CMD_SUB_HL7.equalsIgnoreCase(subCommand)){
+                Hl7SubCmd hl7SubCmd = new Hl7SubCmd(printStream,true);
+                hl7SubCmd.engageSubCommand(argList);
+            }
+
         }
         printStream.println("health command is executing\n");
-        if (argList == null || argList.size() != 1) {
-            printStream.println("Invalid number of arguments recieved!\n try bal health --help for more information.");
-            return;
-        }
+
         printStream.println("Hello " + argList.get(0) + "! \n Please use sub command to generate artifacts." +
                 "$ bal health <protocol: fhir|hl7> [OPTIONS]");
 

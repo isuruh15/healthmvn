@@ -42,8 +42,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
-@CommandLine.Command(name = "fhir", description = "Generates Ballerina service/client for FHIR contract for Ballerina service.")
-public class FhirSubCmd implements BLauncherCmd {
+//@CommandLine.Command(name = "fhir", description = "Generates Ballerina service/client for FHIR contract for Ballerina service.")
+public class FhirSubCmd {
     private final PrintStream printStream;
     private boolean exitWhenFinish;
     private final String toolName = "fhir";
@@ -51,8 +51,18 @@ public class FhirSubCmd implements BLauncherCmd {
     private String resourceHome;
     private String target;
 
-    @CommandLine.Option(names = {"--help", "-h", "?"}, usageHelp = true)
+    @CommandLine.Option(names = {"--help", "-h", "?"}, usageHelp = true, hidden = true)
     private boolean helpFlag;
+
+    @CommandLine.Option(names = {"-s", "--spec-path"}, description = "Location of the healthcare specification files.")
+    private String specPath;
+
+    @CommandLine.Option(names = {"-m", "--mode"}, description = "Execution mode. Only \"template\" and " +
+            "\"package\" options are supported.")
+    private String mode;
+
+    @CommandLine.Option(names = {"-o", "--output"}, description = "Location of the generated Ballerina artifacts.")
+    private String outputPath;
 
     @CommandLine.Parameters(description = "User name")
     private List<String> argList;
@@ -65,22 +75,80 @@ public class FhirSubCmd implements BLauncherCmd {
     public FhirSubCmd() {
         this.printStream = System.out;
         this.exitWhenFinish = true;
-        this.configPath = "/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-executors/healthcare-codegen-fhir-to-x-tool-executor/src/main/resources/tool-config.json";
-        this.resourceHome = "/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-impl/tools/fhir-integration-project-gen-tool/src/main/resources";
+        this.configPath = "/home/isurus/open-healthcare/Ballerina/Tools/configs/tool-config.json";
+        this.resourceHome = "/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-impl/resources";
         this.target = "/home/isurus/open-healthcare/Ballerina/Tools/health-tool-v1/gen";
     }
 
-    @Override
+//    @Override
     public void execute() {
-        printStream.println("Hello from FHIR " + argList.get(0) + "!");
 
+        if (helpFlag) {
+            printStream.println("Help");
+//            String commandUsageInfo = BLauncherCmd.getCommandUsageInfo(getName());
+//            printStream.println(commandUsageInfo);
+            return;
+        }
+
+        printStream.println("FHIR SubTool is Loaded.");
+
+        //todo: remove this
+        printStream.println("Received commands are: " + argList.toString() + "!");
+
+        if (specPath != null){
+            printStream.println("Main exec logic is running");
+
+        }
+
+        this.engageSubCommand(argList);
+
+    }
+
+//    @Override
+//    public String getName() {
+//        return toolName;
+//    }
+//
+//    @Override
+//    public void printLongDesc(StringBuilder stringBuilder) {
+//
+//    }
+//
+//    @Override
+//    public void printUsage(StringBuilder stringBuilder) {
+//
+//    }
+//
+//    @Override
+//    public void setParentCmdParser(CommandLine commandLine) {
+//
+//    }
+
+    private void engageChildTemplateGenerators(TemplateGenerator templateGenerator, ToolContext context,
+                                               Map<String, Object> properties) throws CodeGenException {
+        if (templateGenerator != null) {
+//            if (LOG.isDebugEnabled()) {
+//                LOG.debug("generating templates for child template generator: " +
+//                        templateGenerator.getClass().getName());
+//            }
+            templateGenerator.generate(context, properties);
+            engageChildTemplateGenerators(templateGenerator.getChildTemplateGenerator(), context, properties);
+        }
+    }
+
+    public void engageSubCommand(List<String> argList){
+        printStream.println("engaged");
+//        configPath = "/home/isurus/open-healthcare/Ballerina/Tools/configs/tool-config.json";
+//        target = "/home/isurus/open-healthcare/Ballerina/Tools/health-tool-v1/gen";
+//        resourceHome = "/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-impl/resources";
         JsonObject executorConfig = null;
         try {
             //this might not needed
-            executorConfig = HealthCmdConfig.getParsedConfig("/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-executors/healthcare-codegen-fhir-to-x-tool-executor/src/main/resources/tool-executor-config.json");
+            executorConfig = HealthCmdConfig.getParsedConfig("/home/isurus/open-healthcare/Ballerina/Tools/configs/tool-executor-config.json");
         } catch (BallerinaHealthException e) {
             //todo: verify
 //            LOG.error("Error while initializing tool lib configs.", e);
+            printStream.println("L84");
             printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
             HealthCmdUtils.exitError(this.exitWhenFinish);
         }
@@ -90,6 +158,7 @@ public class FhirSubCmd implements BLauncherCmd {
         FHIRToolConfig fhirToolConfig = new FHIRToolConfig();
 
         if (StringUtils.isNotBlank(configPath)) {
+            printStream.println("config is ok");
             JsonConfigType toolConfig = null;
             FHIRTool fhirToolLib = null;
             try {
@@ -135,17 +204,20 @@ public class FhirSubCmd implements BLauncherCmd {
                 } catch (ClassNotFoundException e) {
 //                    LOG.error("Error occurred while loading tool classes.", e);
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
+                    printStream.println("L138");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
 //                    return;
                 } catch (InstantiationException | IllegalAccessException e) {
 //                    LOG.error("Error occurred while instantiating classes", e);
 //                    return;
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
+                    printStream.println("L146");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 } catch (CodeGenException e) {
 //                    LOG.error("Error occurred while initializing tool configs for the tool: " + toolClassName);
 //                    return;
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
+                    printStream.println("L152");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 }
                 if (mainTemplateGenerator != null) {
@@ -159,49 +231,16 @@ public class FhirSubCmd implements BLauncherCmd {
 //                        LOG.error("Error occurred while template generation for the tool: " + name, e);
 //                        return;
                         printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
+                        printStream.println("L166");
                         HealthCmdUtils.exitError(this.exitWhenFinish);
                     }
                 } else {
-//                    LOG.error("Template generator is not registered for the tool: " + name);
+                    printStream.println("Template generator is not registered for the tool: " + name);
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
+                    printStream.println("L172");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 }
             }
-        }
-
-
-
-    }
-
-    @Override
-    public String getName() {
-        return toolName;
-    }
-
-    @Override
-    public void printLongDesc(StringBuilder stringBuilder) {
-
-    }
-
-    @Override
-    public void printUsage(StringBuilder stringBuilder) {
-
-    }
-
-    @Override
-    public void setParentCmdParser(CommandLine commandLine) {
-
-    }
-
-    private void engageChildTemplateGenerators(TemplateGenerator templateGenerator, ToolContext context,
-                                               Map<String, Object> properties) throws CodeGenException {
-        if (templateGenerator != null) {
-//            if (LOG.isDebugEnabled()) {
-//                LOG.debug("generating templates for child template generator: " +
-//                        templateGenerator.getClass().getName());
-//            }
-            templateGenerator.generate(context, properties);
-            engageChildTemplateGenerators(templateGenerator.getChildTemplateGenerator(), context, properties);
         }
     }
 }

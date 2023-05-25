@@ -28,6 +28,7 @@ import java.util.List;
 public class Hl7SubCmd implements BLauncherCmd {
 
     private final PrintStream printStream;
+    private boolean exitWhenFinish;
     private final String toolName = "hl7";
     @CommandLine.Option(names = {"--help", "-h", "?"}, usageHelp = true)
     private boolean helpFlag;
@@ -35,12 +36,14 @@ public class Hl7SubCmd implements BLauncherCmd {
     @CommandLine.Parameters(description = "User name")
     private List<String> argList;
 
-    public Hl7SubCmd(PrintStream printStream) {
+    public Hl7SubCmd(PrintStream printStream, boolean exitWhenFinish) {
         this.printStream = printStream;
+        this.exitWhenFinish = exitWhenFinish;
     }
 
     public Hl7SubCmd() {
         this.printStream = System.out;
+        this.exitWhenFinish = true;
     }
 
     @Override
@@ -67,5 +70,9 @@ public class Hl7SubCmd implements BLauncherCmd {
     @Override
     public void setParentCmdParser(CommandLine commandLine) {
 
+    }
+
+    public void engageSubCommand(List<String> argList){
+        printStream.println("This protocol is not implemented yet.");
     }
 }
