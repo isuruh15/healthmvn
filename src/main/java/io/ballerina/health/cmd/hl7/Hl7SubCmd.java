@@ -48,7 +48,7 @@ public class Hl7SubCmd implements BLauncherCmd {
 
     @Override
     public void execute() {
-        printStream.println("Hello from HL7 " + argList.get(0) + "!");
+        printStream.println("Ballerina HL7 Artifact Generator.");
 
     }
 
@@ -73,6 +73,6 @@ public class Hl7SubCmd implements BLauncherCmd {
     }
 
     public void engageSubCommand(List<String> argList){
-        printStream.println("This protocol is not implemented yet.");
+        printStream.println("This protocol will available soon.");
     }
 }

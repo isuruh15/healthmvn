@@ -25,6 +25,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class HealthCmdConfig {
 
@@ -40,6 +42,14 @@ public class HealthCmdConfig {
                 throw new BallerinaHealthException("Error occurred while loading tool config file for the path: " +
                         toolConfigPath, e);
             }
+        }
+        return null;
+    }
+
+    public static JsonObject getParsedConfigFromFile(InputStream toolConfigFileStream) throws BallerinaHealthException {
+        Gson gson = new Gson();
+        if (toolConfigFileStream != null) {
+            return gson.fromJson(new InputStreamReader(toolConfigFileStream), JsonObject.class);
         }
         return null;
     }
