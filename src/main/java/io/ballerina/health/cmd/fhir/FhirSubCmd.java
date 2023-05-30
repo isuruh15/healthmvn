@@ -40,11 +40,17 @@ import org.wso2.healthcare.fhir.codegen.tool.lib.core.FHIRTool;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -195,14 +201,15 @@ public class FhirSubCmd implements BLauncherCmd {
                     Class<?> toolClazz = Class.forName(toolClassName);
                     ToolConfig toolConfigInstance = (ToolConfig) configClazz.newInstance();
                     //todo if null set to tool resources directory
+//                    toolConfigInstance.setConfigHomeDir(specificationPath.toString());
                     toolConfigInstance.setConfigHomeDir(specificationPath.toString());
                     toolConfigInstance.setTargetDir(targetOutputPath.toString());
                     toolConfigInstance.setToolName(name);
-                    JsonArray tools = toolConfig.getConfigObj().get("tools").getAsJsonArray();
+                    JsonArray tools = toolConfig.getConfigObj().getAsJsonObject("executors").get("tools").getAsJsonArray();
                     for (JsonElement element : tools) {
                         JsonElement toolName = element.getAsJsonObject().get("name");
                         if (toolName.getAsString().equals(name)) {
-                            toolConfigInstance.configure(new JsonConfigType(element.getAsJsonObject()));
+                            toolConfigInstance.configure(new JsonConfigType(element.getAsJsonObject().getAsJsonObject("config")));
                         }
                     }
 
@@ -285,15 +292,24 @@ public class FhirSubCmd implements BLauncherCmd {
 
     private InputStream getResourceFile(String fileName) {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        InputStream ioStream = this.getClass()
-                .getClassLoader()
-                .getResourceAsStream(fileName);
+        InputStream ioStream = classLoader.getResourceAsStream(fileName);
 
         if (ioStream == null) {
             throw new IllegalArgumentException("tool-config.json" + " is not found");
         }
         return ioStream;
+    }
 
+    private Path getFolderPath() throws URISyntaxException, IOException {
+        URI uri = getClass().getClassLoader().getResource("velocity-template").toURI();
+        printStream.println("uri: " + uri);
+        if ("jar".equals(uri.getScheme())) {
+            try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap(), null)) {
+                return fileSystem.getPath("BallerinaProjectGenerationTool");
+            }
+        } else {
+            return Paths.get(uri);
+        }
     }
 
 }
