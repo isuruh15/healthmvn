@@ -25,6 +25,8 @@ public class HealthCmdConstants {
     public static final String CMD_SUB_FHIR = "fhir";
     public static final String CMD_SUB_HL7 = "hl7";
     public static final String CMD_CONFIG_FILENAME = "tool-config.json";
-    public static final String CMD_RESOURCE_FILEPATH = "$HOME/.ballerina/repositories/central.ballerina.io/bala/isurusamaranayake/health/0.1.5/any/modules/health/resources/velocity-templates";
+    public static final String CMD_MVN_ARTIFACT_NAME = "health-tools";
+    public static final String CMD_RESOURCE_PATH_SUFFIX = "/modules/health/resources";
+
 
 }

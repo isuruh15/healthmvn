@@ -1,6 +1,5 @@
 {
   "fhir": {
-    "resourceHome": "/.ballerina/repositories/central.ballerina.io/bala/isurusamaranayake/health/0.1.5/any/modules/health/resources",
     "tools": [
       {
         "name": "BallerinaProjectGenerationTool",

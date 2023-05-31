@@ -25,6 +25,7 @@ public class ErrorMessages {
 
     public static final String CONFIG_INITIALIZING_FAILED = "Error while initializing tool config. Please check the " +
             "config file and try again";
+    public static final String TOOL_EXECUTION_FAILED = "Error while executing tool.";
     public static final String LIB_INITIALIZING_FAILED = "Error while initializing protocol lib configs. Please check the " +
             "config file and try again";
 

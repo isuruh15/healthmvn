@@ -18,7 +18,6 @@
 
 package io.ballerina.health.cmd.fhir;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -39,9 +38,8 @@ import org.wso2.healthcare.fhir.codegen.tool.lib.config.FHIRToolConfig;
 import org.wso2.healthcare.fhir.codegen.tool.lib.core.FHIRTool;
 import picocli.CommandLine;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -86,26 +84,35 @@ public class FhirSubCmd implements BLauncherCmd {
         this.printStream = printStream;
         this.exitWhenFinish = exitWhenFinish;
         buildConfig(printStream);
-        this.resourceHome = Paths.get(System.getProperty("user.home")).toAbsolutePath() +
-                defaultConfigJson.get("fhir").getAsJsonObject().get("resourceHome").getAsString();
+        this.resourceHome = HealthCmdUtils.getRuntimeResourcePath();
     }
 
     public FhirSubCmd() {
         this.printStream = System.out;
         this.exitWhenFinish = true;
-//        this.resourceHome = "/home/isurus/open-healthcare/open-healthcare-integration/healthcare-codegen-tool-framework/healthcare-codegen-tool-impl/resources";
         buildConfig(printStream);
-        this.resourceHome = Paths.get(System.getProperty("user.home")).toAbsolutePath() +
-                defaultConfigJson.get("fhir").getAsJsonObject().get("resourceHome").getAsString();
+        this.resourceHome = HealthCmdUtils.getRuntimeResourcePath();
     }
 
     @Override
     public void execute() {
 
         if (helpFlag) {
-            printStream.println("Help");
-            //implement this
-            return;
+            InputStream inputStream = ClassLoader.getSystemResourceAsStream("ballerina-health.help");
+            if (inputStream != null) {
+                try (InputStreamReader inputStreamREader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                     BufferedReader br = new BufferedReader(inputStreamREader)) {
+                    String content = br.readLine();
+                    printStream.append(content);
+                    while ((content = br.readLine()) != null) {
+                        printStream.append('\n').append(content);
+                    }
+                } catch (IOException e) {
+                    printStream.println("Helper text is not available.");
+                    HealthCmdUtils.exitError(exitWhenFinish);;
+                }
+                return;
+            }
         }
 
         if (argList.isEmpty()) {
@@ -115,7 +122,8 @@ public class FhirSubCmd implements BLauncherCmd {
             return;
         }
         printStream.println("FHIR SubTool is Loaded.");
-        this.engageSubCommand(argList);
+        System.out.println("ClassPath = " + HealthCmdUtils.getClassPath());
+        HealthCmdUtils.exitError(exitWhenFinish);
 
     }
 
@@ -256,14 +264,12 @@ public class FhirSubCmd implements BLauncherCmd {
                     } catch (CodeGenException e) {
 //                        LOG.error("Error occurred while template generation for the tool: " + name, e);
 //                        return;
-                        printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
-                        printStream.println("L166");
+                        printStream.println(ErrorMessages.TOOL_EXECUTION_FAILED);
                         HealthCmdUtils.exitError(this.exitWhenFinish);
                     }
                 } else {
                     printStream.println("Template generator is not registered for the tool: " + name);
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
-                    printStream.println("L172");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 }
             }

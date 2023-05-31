@@ -6,7 +6,8 @@ import io.ballerina.health.cmd.fhir.FhirSubCmd;
 import io.ballerina.health.cmd.hl7.Hl7SubCmd;
 import picocli.CommandLine;
 
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @CommandLine.Command(
@@ -41,15 +42,19 @@ public class HealthCmd implements BLauncherCmd {
     @Override
     public void execute() {
         if (helpFlag) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Sample tool for bal tool testing\n\n");
-            builder.append("bal health [args]\n\n");
-            builder.append("--args--\n");
-            builder.append("  <name>\n");
-            builder.append("    greets with a hello <name>\n\n");
-            printStream.println(builder);
-            String commandUsageInfo = BLauncherCmd.getCommandUsageInfo(getName());
-            printStream.println(commandUsageInfo);
+            InputStream inputStream = ClassLoader.getSystemResourceAsStream("ballerina-health.help");
+            if (inputStream != null) {
+                try (InputStreamReader inputStreamREader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                     BufferedReader br = new BufferedReader(inputStreamREader)) {
+                    String content = br.readLine();
+                    printStream.append(content);
+                    while ((content = br.readLine()) != null) {
+                        printStream.append('\n').append(content);
+                    }
+                } catch (IOException e) {
+                    printStream.println("Helper text is not available.");
+                }
+            }
             return;
         }
 
@@ -71,6 +76,19 @@ public class HealthCmd implements BLauncherCmd {
 
     @Override
     public void printLongDesc(StringBuilder stringBuilder) {
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("ballerina-health.help");
+        if (inputStream != null) {
+            try (InputStreamReader inputStreamREader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                 BufferedReader br = new BufferedReader(inputStreamREader)) {
+                String content = br.readLine();
+                printStream.append(content);
+                while ((content = br.readLine()) != null) {
+                    printStream.append('\n').append(content);
+                }
+            } catch (IOException e) {
+                printStream.println("Helper text is not available.");
+            }
+        }
 
     }
 
