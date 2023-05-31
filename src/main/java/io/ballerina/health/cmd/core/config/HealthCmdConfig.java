@@ -27,14 +27,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 
 public class HealthCmdConfig {
 
-    public static JsonObject getParsedConfig(String toolConfigPath) throws BallerinaHealthException {
+    public static JsonObject getParsedConfigFromPath(Path toolConfigPath) throws BallerinaHealthException {
         Gson gson = new Gson();
-        if (StringUtils.isNotBlank(toolConfigPath)) {
+        if (toolConfigPath != null && StringUtils.isNotBlank(toolConfigPath.toString())) {
             try {
-                JsonObject toolConfigObj = gson.fromJson(new FileReader(toolConfigPath), JsonObject.class);
+                JsonObject toolConfigObj = gson.fromJson(new FileReader(toolConfigPath.toFile()), JsonObject.class);
                 if (toolConfigObj != null) {
                     return toolConfigObj;
                 }
@@ -46,7 +47,7 @@ public class HealthCmdConfig {
         return null;
     }
 
-    public static JsonObject getParsedConfigFromFile(InputStream toolConfigFileStream) throws BallerinaHealthException {
+    public static JsonObject getParsedConfigFromStream(InputStream toolConfigFileStream) throws BallerinaHealthException {
         Gson gson = new Gson();
         if (toolConfigFileStream != null) {
             return gson.fromJson(new InputStreamReader(toolConfigFileStream), JsonObject.class);

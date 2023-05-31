@@ -53,11 +53,6 @@ public class HealthCmd implements BLauncherCmd {
             return;
         }
 
-        if (argList == null || argList.size() < 2) {
-            //at minimum arg count is 2 (protocol and spec path)
-            printStream.println("Invalid number of arguments received!\n try bal health --help for more information.");
-            return;
-        }
         //spec path is the last argument
         specPath = argList.get(argList.size()-1);
         subCommand = argList.get(0);
@@ -87,5 +82,10 @@ public class HealthCmd implements BLauncherCmd {
     @Override
     public void setParentCmdParser(CommandLine commandLine) {
 
+    }
+
+    public static void main(String[] args) {
+        HealthCmd healthCmd = new HealthCmd(System.out);
+        new CommandLine(healthCmd).execute(args);
     }
 }
