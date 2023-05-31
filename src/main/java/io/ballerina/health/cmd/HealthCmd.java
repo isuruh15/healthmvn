@@ -62,8 +62,6 @@ public class HealthCmd implements BLauncherCmd {
         specPath = argList.get(argList.size()-1);
         subCommand = argList.get(0);
 
-        printStream.println("health command is executing\n");
-
         printStream.println("Hello " + argList.get(0) + "! \n Please use sub command to generate artifacts." +
                 "$ bal health <protocol: fhir|hl7> [OPTIONS]");
 
@@ -100,10 +98,5 @@ public class HealthCmd implements BLauncherCmd {
     @Override
     public void setParentCmdParser(CommandLine commandLine) {
 
-    }
-
-    public static void main(String[] args) {
-        HealthCmd healthCmd = new HealthCmd(System.out);
-        new CommandLine(healthCmd).execute(args);
     }
 }

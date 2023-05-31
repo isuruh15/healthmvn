@@ -121,8 +121,7 @@ public class FhirSubCmd implements BLauncherCmd {
             printStream.println(argList);
             return;
         }
-        printStream.println("FHIR SubTool is Loaded.");
-        System.out.println("ClassPath = " + HealthCmdUtils.getClassPath());
+        this.engageSubCommand(argList);
         HealthCmdUtils.exitError(exitWhenFinish);
 
     }
@@ -236,22 +235,13 @@ public class FhirSubCmd implements BLauncherCmd {
                     fhirToolLib.getToolImplementations().putIfAbsent(name, tool);
                     mainTemplateGenerator = tool.execute(fhirToolLib.getToolContext());
                 } catch (ClassNotFoundException e) {
-//                    LOG.error("Error occurred while loading tool classes.", e);
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
-                    printStream.println("L138");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
-//                    return;
                 } catch (InstantiationException | IllegalAccessException e) {
-//                    LOG.error("Error occurred while instantiating classes", e);
-//                    return;
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
-                    printStream.println("L146");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 } catch (CodeGenException e) {
-//                    LOG.error("Error occurred while initializing tool configs for the tool: " + toolClassName);
-//                    return;
                     printStream.println(ErrorMessages.CONFIG_INITIALIZING_FAILED);
-                    printStream.println("L152");
                     HealthCmdUtils.exitError(this.exitWhenFinish);
                 }
                 if (mainTemplateGenerator != null) {
@@ -262,8 +252,6 @@ public class FhirSubCmd implements BLauncherCmd {
                         engageChildTemplateGenerators(childTemplateGenerator, fhirToolLib.getToolContext(),
                                 mainTemplateGenerator.getGeneratorProperties());
                     } catch (CodeGenException e) {
-//                        LOG.error("Error occurred while template generation for the tool: " + name, e);
-//                        return;
                         printStream.println(ErrorMessages.TOOL_EXECUTION_FAILED);
                         HealthCmdUtils.exitError(this.exitWhenFinish);
                     }
