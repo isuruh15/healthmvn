@@ -45,9 +45,8 @@
               {
                 "implementationGuide": "USCore",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.uscore501",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
-                  "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
                 ],
                 "excludedProfiles": [
                 ]
@@ -55,7 +54,7 @@
               {
                 "implementationGuide": "CarinBB",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.carinbb",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
                 ],
                 "excludedProfiles": [
@@ -64,7 +63,7 @@
               {
                 "implementationGuide": "DavinciPDEX",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.davincipdex",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
                 ],
                 "excludedProfiles": [
@@ -73,7 +72,7 @@
               {
                 "implementationGuide": "DavinciPDEX-Plannet",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.davincipdexplannet",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
                 ],
                 "excludedProfiles": [
@@ -82,7 +81,7 @@
               {
                 "implementationGuide": "DavinciPDex-USDF",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.davincipdexusdf",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
                 ],
                 "excludedProfiles": [
@@ -91,7 +90,7 @@
               {
                 "implementationGuide": "DavinciPDEX-PayerDataEX",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.davincipdexpayerdataex",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [
                 ],
                 "excludedProfiles": [
@@ -109,7 +108,7 @@
               {
                 "implementationGuide": "AUBase",
                 "importStatement": "wso2healthcare/healthcare.fhir.r4.aubase",
-                "enable": false,
+                "enable": true,
                 "includedProfiles": [],
                 "excludedProfiles": []
               }
@@ -164,25 +163,25 @@
           "includedIGs": [
             {
               "implementationGuide": "international",
-              "enable": false,
+              "enable": true,
               "includedProfiles": [],
               "excludedProfiles": []
             },
             {
               "implementationGuide": "USCore",
-              "enable": false,
+              "enable": true,
               "includedProfiles": [],
               "excludedProfiles": []
             },
             {
               "implementationGuide": "CarinBB",
-              "enable": false,
+              "enable": true,
               "includedProfiles": [],
               "excludedProfiles": []
             },
             {
               "implementationGuide": "DavinciPDEX",
-              "enable": false,
+              "enable": true,
               "includedProfiles": [],
               "excludedProfiles": []
             },

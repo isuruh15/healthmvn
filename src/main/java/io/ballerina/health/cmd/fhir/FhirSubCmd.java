@@ -166,6 +166,7 @@ public class FhirSubCmd implements BLauncherCmd {
             try {
                 configJson = HealthCmdConfig.getParsedConfigFromPath(Paths.get(configPath));
             } catch (BallerinaHealthException e) {
+                //todo: handle properly. use Bal Utils
                 throw new RuntimeException(e);
             }
         } else {
